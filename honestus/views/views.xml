@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_saleorder_document_inherit_sale_management_honestus"
+                  inherit_id="sale_management.sale_order_portal_content_inherit_sale_management">
+            <xpath expr="//section[1]/table[1]/thead[1]/tr[1]/th[1]" position="replace">
+                <th class="text-start">[Code] Product</th>
+            </xpath>
+            <xpath expr="//section[1]/table[1]/tbody[1]/tr[1]/t[1]/td[1]" position="replace">
+                <t t-foreach="sale_order.sale_order_option_ids" t-as="line">
+                    <td>
+                        <div>
+                            <span t-field="line.product_id.rec_name"/>
+                        </div>
+                    </td>
+                </t>
+            </xpath>
+            <xpath expr="//section[1]/table[1]/thead[1]/tr[1]/th[3]" position="replace">
+                <th name="th_priceunit" class="text-end">Unit/Honestus Price</th>
+            </xpath>
+            <xpath expr="//section[1]/table[1]/tbody[1]/tr[1]/t[1]/td[2]" position="replace">
+                <t t-foreach="sale_order.sale_order_option_ids" t-as="option">
+                    <td>
+                        <strong class="text-end">
+                            <div t-att-style="option.discount and 'text-decoration: line-through' or None"
+                                 t-att-class="option.discount and 'text-danger' or None">
+                                <span t-field="option.price_unit"
+                                      t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                                />
+                                /
+                                <span t-if="option.product_id.honestus_price"
+                                      t-field="option.product_id.honestus_price"/>
+                                <span t-if="not option.product_id.honestus_price">-</span>
+                            </div>
+                            <div t-if="option.discount">
+                                <t t-out="(1-option.discount / 100.0) * option.price_unit"
+                                   t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'/>
+                            </div>
+
+                        </strong>
+                    </td>
+                </t>
+            </xpath>
+
+        </template>
+
+
+        <template id="quotation_order_inherit_for_honestus"
+                  name="Quotation / Order"
+                  inherit_id="sale.report_saleorder_document">
+            <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()"/>
+            <xpath expr="//th[@name='th_description']" position="replace">
+                <th name="th_description" class="text-start">[Code] Description</th>
+            </xpath>
+            <xpath expr="//th[@name='th_priceunit']" position="inside">
+                <span>/Honestus Price</span>
+            </xpath>
+            <xpath expr="//td[@name='td_name']" position="replace">
+                <t t-foreach="lines_to_report" t-as="line">
+                    <td name="td_name">
+                        <span t-field="line.product_id.rec_name"/>
+                    </td>
+                </t>
+            </xpath>
+            <xpath expr="//td[@name='td_priceunit']" position="inside">
+                <t t-foreach="lines_to_report" t-as="line">
+                    /
+                    <span t-if="line.product_id.honestus_price" t-field="line.product_id.honestus_price"/>
+                    <span t-if="not line.product_id.honestus_price">-</span>
+                </t>
+            </xpath>
+        </template>
+
+
+        <template id="report_invoice_document_for_honestus"
+                  name="Quotation / Order website"
+                  inherit_id="account.report_invoice_document">
+            <t t-set="o" t-value="o.with_context(lang=lang)"/>
+            <t t-set="lines"
+               t-value="o.invoice_line_ids.sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
+            <xpath expr="//th[@name='th_description']" position="inside">
+                <span>/Code</span>
+            </xpath>
+            <xpath expr="//th[@name='th_priceunit']" position="replace">
+                <th name="th_priceunit"
+                    t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                    <span>Honestus Price/Unit Price</span>
+                </th>
+            </xpath>
+            <xpath expr="//td[@name='account_invoice_line_name']" position="inside">
+                <t t-foreach="lines" t-as="line">
+                    <span t-if="not line.product_id.honestus_code">
+                        /
+                        <span t-if="line.product_id.default_code" t-field="line.product_id.default_code"/>
+                        <span t-if="not line.product_id.default_code">-</span>
+                    </span>
+                    <span t-if="line.product_id.honestus_code">
+                        /
+                        <span t-field="line.product_id.honestus_code"/>
+                    </span>
+
+                </t>
+            </xpath>
+            <xpath expr="//t[@name='account_invoice_line_accountable']/td[3]" position="replace">
+                <t t-foreach="lines" t-as="line">
+                    <td class="text-end">
+                        <span t-if="line.product_id.honestus_price" t-field="line.product_id.honestus_price"/>
+                        <span t-if="not line.product_id.honestus_price" t-field="line.unit_price"/>
+                    </td>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

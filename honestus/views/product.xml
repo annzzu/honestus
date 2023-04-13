@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_form_honestus" model="ir.ui.view">
+            <field name="name">product.product.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="rec_name" />
+                </xpath>
+                <xpath expr="//field[@name='default_code']" position="after">
+                    <field name="default_code" invisible="1"/>
+                    <field name="honestus_code"
+                           attrs="{'required':[('default_code','!=',False), ('default_code','!=','')]}"/>
+                    <field name="honestus_price"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
