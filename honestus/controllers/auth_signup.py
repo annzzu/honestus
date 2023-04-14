@@ -12,12 +12,14 @@ class AuthSignupHomeInherit(AuthSignupHome):
         return qcontext
 
     def _prepare_signup_values(self, qcontext):
-        values = {key: qcontext.get(key) for key in ('login', 'name', 'password', 'mobile')}
+        keys = ('login', 'name', 'password', 'mobile')
+        values = {key: qcontext.get(key) for key in keys}
         if not values:
             raise UserError(_("The form was not properly filled in."))
         if values.get('password') != qcontext.get('confirm_password'):
             raise UserError(_("Passwords do not match; please retype them."))
-        supported_lang_codes = [code for code, _ in request.env['res.lang'].get_installed()]
+        get_installed = request.env['res.lang'].get_installed()
+        supported_lang_codes = [code for code, _ in get_installed]
         lang = request.context.get('lang', '')
         if lang in supported_lang_codes:
             values['lang'] = lang

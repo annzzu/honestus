@@ -8,7 +8,11 @@
     'sequence': 95,
     'summary': 'Honestus Task',
     'author': "Ana Zurabashvili",
-    'depends': ['website', 'product_margin', 'sale'],
+    'depends': ['website',
+                'product_margin',
+                'sale', 'sale_management',
+                'website_payment'
+                ],
     'data': [
         'security/ir.model.access.csv',
         'views/account_form.xml',

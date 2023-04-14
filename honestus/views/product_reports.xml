@@ -105,7 +105,7 @@
                 <t t-foreach="lines" t-as="line">
                     <td class="text-end">
                         <span t-if="line.product_id.honestus_price" t-field="line.product_id.honestus_price"/>
-                        <span t-if="not line.product_id.honestus_price" t-field="line.unit_price"/>
+                        <span t-if="line.product_id.honestus_price==''" t-field="line.unit_price"/>
                     </td>
                 </t>
             </xpath>

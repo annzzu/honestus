@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import fields, models, api
 
 """
 I was using abstract model instead of models.
@@ -17,22 +17,39 @@ class HonestusReport(models.Model):
     _description = "Honestus Analysis Report"
     _auto = False
 
-    product_id = fields.Many2one('product.product', 'Product Variant', readonly=True)
-    partner_id = fields.Many2one('res.partner', 'Customer', readonly=True)
-    order_id = fields.Many2one('sale.order', 'Order #', readonly=True)
+    product_id = fields.Many2one('product.product', 'Product Variant',
+                                 readonly=True)
+    partner_id = fields.Many2one('res.partner', 'Customer',
+                                 readonly=True)
+    order_id = fields.Many2one('sale.order', 'Order #',
+                               readonly=True)
     name = fields.Char('Order Reference', readonly=True)
     default_code = fields.Char()
     honestus_code = fields.Char()
     price_unit = fields.Float()
     honestus_price = fields.Float()
-    price_total = fields.Float()
+    standard_price = fields.Float('cost')
     margin = fields.Float()
+
+    # todo
+    # standard_price = fields.Float('standard_price')
+    #
+    # @api.depends_context('company')
+    # @api.depends('product_variant_ids', 'product_variant_ids.standard_price')
+    # def _compute_standard_price(self):
+    #     # Depends on force_company context because standard_price is company_dependent
+    #     # on the product_product
+    #     unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+    #     for template in unique_variants:
+    #         template.standard_price = template.product_variant_ids.standard_price
+    #     for template in (self - unique_variants):
+    #         template.standard_price = 0.0
 
     """
             if line.price_unit:
-                margin = (line.price_unit - cost) / line.price_unit
+                margin = (price_unit - standard_price) / line.price_unit
             elif line.honestus_code:
-                margin = (line.honestus_code - cost) / line.honestus_code
+                margin = (honestus_code - standard_price) / line.honestus_code
             else:
                 margin = 0
      """
@@ -49,12 +66,14 @@ class HonestusReport(models.Model):
             l.price_unit     AS price_unit,
             p.default_code   AS default_code,
             l.price_total    AS price_total,
-            SUM(l.price_unit - {self._case_value_or_one('l.price_total')}/ {self._case_value_or_one('l.price_unit')}) AS margin
+            SUM(l.price_unit - {self._case_value_or_one('l.price_total')}
+            / {self._case_value_or_one('l.price_unit')}) AS margin
             """
         return select_
 
     def _case_value_or_one(self, value):
-        return f"""CASE COALESCE({value}, 0) WHEN 0 THEN 1.0 ELSE {value} END"""
+        return f"""CASE COALESCE({value}, 0) 
+        WHEN 0 THEN 1.0 ELSE {value} END"""
 
     def _from(self):
         return """
