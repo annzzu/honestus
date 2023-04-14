@@ -42,12 +42,22 @@ tags: https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms7622
 -[ ] Provide estimation for development
 
 ---------------------------
+First of all, I would like to have an opportunity to see the problem. It would be helpful to decide much more optimized version. The useful thing would be to see how the cron is written and how the xml data is attached to the cron. If there was a possibility to change xml formatted file with another format, such as CSV or JSON it would be more optimized due to its faster and easier. 
+
+
+Before I would start to do something, I mean coding, I would surf the google and search some optimization, xml parsing and some good practices. 
+
+However, this problem is only for discussion. Isn’t it ?
+
+
+
 In order to resolve the problem, we need to optimize the code that reads and interpret XML File.
 There is potential solving method.
 
 The book objects in the xml have primary field (mostly string and float) we know how each field looks like. So in my
 opinion if we know and the fields are primary, it could be more optimized to write our own xml parser. Existing xml
-parser is heavy, in spite of it’s recommended to use one, we can decide not to use it.
+parser is heavy, in spite of it’s recommended to use one, we can decide not to use it.  
+Or it can be done ->  xml parse into json object.
 
 -[ ] Split the large XML file into smaller chunks for processing. We can use a library like lxml or ElementTree to
  parse ( or do the one I have mentioned previously) in the XML file and divide it into smaller parts.
