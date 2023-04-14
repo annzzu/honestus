@@ -43,4 +43,30 @@ tags: https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms7622
 
 
 ---------------------------
-first of all whe 
+In order to resolve the problem, we need to optimize the code that reads and interpret XML File.
+There is potential solving method. 
+
+The book objects in the xml have primary field (mostly string and float) we know how each field looks like. So in my opinion if we know and the fields are primary, it could be more optimized to write our own xml parser. Existing xml parser is heavy, in spite of it’s recommended  to use one,  we can decide not to use it.
+
+-[ ] Split the large XML file into smaller chunks for processing. We can use a library like lxml or ElementTree to parse ( or do the one I have mentioned previously) in the XML file and divide it into smaller parts.
+
+-[ ]  Every chunk should be released into different threads Process to improve the performance. (use multi threads)
+
+-[ ] We can store/update data directly. We can use Odoo ORM to interact with the database and store the products. Or like I said before the book contains primary data we can use sql queries to make process more optimized (it’s faster)  This will improve performance and prevent the system from running out of memory.
+
+- [ ] During the processing of the data, I would add implementation of error handling and logging mechanisms to monitor the processing and detect any issues that might arise. And it’s depended on to business logic when we want to commit this data storing process, in my opinion I would right commit code in the end of the process (every thread finishes). And if there would be given demand to update data in the system beside failure I would skip this object and update remaining ones.
+
+If there would be given demand to update data if there is any problem I would write code to reply this cron.
+
+If there is any error rollback.
+---------------------------
+Splitting the large XML file and writing parser: 4-5 hours
+
+Implementing a multi-threading: 4-5 hours
+
+Error handling and logging: 5 hours
+
+Code optimization: 3-4 hours
+
+I have given max hours on each process. he total estimated would be around 20-30 hours. (it's not sum but there could be some unplanned situations)
+
