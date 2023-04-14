@@ -1,29 +1,14 @@
+from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.exceptions import UserError
 from odoo.http import request
 from odoo import _
-from odoo.addons.web.controllers.home import SIGN_UP_REQUEST_PARAMS
-from odoo.addons.web.controllers.home import Home
 
 
-class AuthSignupHomeInherit(Home):
+class AuthSignupHomeInherit(AuthSignupHome):
     def get_auth_signup_qcontext(self):
-        """ Shared helper returning the rendering context for signup and reset password """
-        SIGN_UP_REQUEST_PARAMS.add('mobile')
-        qcontext = {k: v for (k, v) in request.params.items() if k in SIGN_UP_REQUEST_PARAMS}
-
-        qcontext.update(self.get_auth_signup_config())
-
-        if not qcontext.get('token') and request.session.get('auth_signup_token'):
-            qcontext['token'] = request.session.get('auth_signup_token')
-        if qcontext.get('token'):
-            try:
-                # retrieve the user info (name, login or email) corresponding to a signup token
-                token_infos = request.env['res.partner'].sudo().signup_retrieve_info(qcontext.get('token'))
-                for k, v in token_infos.items():
-                    qcontext.setdefault(k, v)
-            except:
-                qcontext['error'] = _("Invalid signup token")
-                qcontext['invalid_token'] = True
+        """had different solution, it is much easy to read and understand"""
+        qcontext = super().get_auth_signup_qcontext()
+        qcontext['mobile'] = request.params.get('mobile')
         return qcontext
 
     def _prepare_signup_values(self, qcontext):

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_product_pivot_honestus" model="ir.ui.view">
+        <field name="name">honestus.report.pivot</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Honestus Report" sample="1">
+                <!--                <field name="date" interval="month" type="row"/>-->
+                <field name="honestus_price" type="measure"/>
+                <field name="partner_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="honestus_report_graph" model="ir.ui.view">
+        <field name="name">Honestus Report Ghrap</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <graph string="Honestus Report" type="line" sample="1">
+                <field name="partner_id" type="col"/>
+                <field name="honestus_price" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="honestus_report_tree" model="ir.ui.view">
+        <field name="name">Honestus Report Tree</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <tree string="Honestus Report">
+                <groupby name="partner_id">
+                </groupby>
+                <field name="partner_id"/>
+                <field name="order_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="honestus_report_form" model="ir.ui.view">
+        <field name="name">Honestus Report Form</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <form string="Sales Analysis">
+                <sheet>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="partner_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_honestus_report_search" model="ir.ui.view">
+        <field name="name">Honestus Report Search</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <search string="Honestus report">
+                <group expand="1" string="Group By">
+                    <filter string="Customer" name="Customer" context="{'group_by':'partner_id'}"/>
+                    <filter string="Order Reference" name="Order" context="{'group_by':'name'}"/>
+                    <filter string="Product Code" name="Product Code" context="{'group_by':'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_res_company_kanban" model="ir.ui.view">
+        <field name="name">Honestus Report</field>
+        <field name="model">honestus.report</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="partner_id">
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="honestus_code"/>
+                <field name="margin"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div>
+                                <i class="fa fa-building" role="img" aria-label="Enterprise" title="Enterprise"></i>
+                                <strong>
+                                    <field name="product_id"/>
+                                </strong>
+                            </div>
+                            <hr class="mt4 mb4"/>
+                            <div class="row">
+                                <strong>Custumer:
+                                    <field name="partner_id"/>
+                                </strong>
+                            </div>
+                            <hr class="mt4 mb4"/>
+                            <div class="row">
+                                <span>Honestus code:
+                                    <field name="honestus_code"/>
+                                </span>
+                            </div>
+                            <div class="row">
+                                <span>
+                                    Margin:
+                                    <field name="honestus_code"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_honestus_report" model="ir.actions.act_window">
+        <field name="name">Honestus Report</field>
+        <field name="res_model">honestus.report</field>
+        <field name="view_mode">graph,pivot,tree,form,kanban</field>
+        <field name="search_view_id" ref="view_honestus_report_search"/>
+        <field name="view_id"></field>
+        <field name="help">honestus Report action</field>
+        <field name="context">{'group_by':['partner_id']}</field>
+    </record>
+
+    <menuitem id="menu_honestus_report"
+              name="Honestus"
+              action="action_honestus_report"
+              sequence="45"
+              parent="sale.sale_menu_root"/>
+
+</odoo>
